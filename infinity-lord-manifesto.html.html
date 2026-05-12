@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Infinity Lord Governing Protocol</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #f0d080;
+    --gold-dim: #7a6030;
+    --deep: #050810;
+    --deep2: #0a0f1e;
+    --ink: #0d1428;
+    --white: #f5f0e8;
+    --white-dim: #a09880;
+    --accent: #4a9eff;
+    --accent2: #7b4fff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--deep);
+    color: var(--white);
+    font-family: 'Cormorant Garamond', serif;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* STARFIELD */
+  .starfield {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .star {
+    position: absolute;
+    border-radius: 50%;
+    background: white;
+    animation: twinkle var(--d, 3s) ease-in-out infinite alternate;
+    opacity: var(--o, 0.5);
+  }
+  @keyframes twinkle {
+    from { opacity: var(--o, 0.3); transform: scale(1); }
+    to { opacity: calc(var(--o, 0.3) * 0.3); transform: scale(0.8); }
+  }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 20px;
+    background: radial-gradient(ellipse at 50% 40%, rgba(201,168,76,0.12) 0%, transparent 65%),
+                radial-gradient(ellipse at 50% 100%, rgba(74,158,255,0.08) 0%, transparent 60%);
+  }
+
+  .sigil {
+    width: 140px;
+    height: 140px;
+    margin-bottom: 40px;
+    position: relative;
+    animation: rotateSigil 30s linear infinite;
+  }
+  @keyframes rotateSigil {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .sigil svg { width: 100%; height: 100%; }
+
+  .protocol-label {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.5em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.3s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(2rem, 6vw, 4.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 40%, var(--gold-dim) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.5s forwards;
+  }
+
+  .hero-subtitle {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(0.9rem, 2.5vw, 1.4rem);
+    font-weight: 400;
+    color: var(--gold-dim);
+    letter-spacing: 0.15em;
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.7s forwards;
+  }
+
+  .divider-gold {
+    width: 200px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 0 auto 30px;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.9s forwards;
+  }
+
+  .hero-meta {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.3em;
+    color: var(--white-dim);
+    opacity: 0;
+    animation: fadeUp 1s ease 1.1s forwards;
+  }
+  .hero-meta span { color: var(--gold); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* SCROLL INDICATOR */
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    animation: fadeUp 1s ease 2s forwards;
+  }
+  .scroll-hint span {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.4em;
+    color: var(--white-dim);
+    text-transform: uppercase;
+  }
+  .scroll-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(180deg, var(--gold), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.2); }
+  }
+
+  /* MAIN CONTENT */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 30px 120px;
+  }
+
+  /* PREAMBLE */
+  .preamble {
+    text-align: center;
+    padding: 80px 0 60px;
+    border-top: 1px solid rgba(201,168,76,0.2);
+  }
+  .preamble-text {
+    font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+    font-style: italic;
+    font-weight: 300;
+    line-height: 1.8;
+    color: var(--white);
+    opacity: 0.9;
+  }
+  .preamble-text em {
+    color: var(--gold-light);
+    font-style: normal;
+    font-weight: 600;
+  }
+
+  /* PHASE SECTIONS */
+  .phase {
+    margin: 80px 0;
+    position: relative;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .phase.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .phase-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 30px;
+    margin-bottom: 40px;
+  }
+
+  .phase-number {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 4rem;
+    font-weight: 900;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold-dim));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    flex-shrink: 0;
+    opacity: 0.3;
+  }
+
+  .phase-title-block { flex: 1; }
+
+  .phase-tag {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.5em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .phase-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(1.3rem, 3vw, 2rem);
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+
+  .phase-subtitle {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    color: var(--white-dim);
+    letter-spacing: 0.1em;
+  }
+
+  .phase-body {
+    font-size: clamp(1rem, 1.8vw, 1.15rem);
+    line-height: 1.9;
+    color: rgba(245,240,232,0.85);
+    font-weight: 300;
+    padding-left: 0;
+  }
+
+  .phase-body p { margin-bottom: 1.4em; }
+
+  /* PILLARS */
+  .pillars {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin: 40px 0;
+  }
+
+  .pillar {
+    background: linear-gradient(135deg, rgba(201,168,76,0.05), rgba(74,158,255,0.03));
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 2px;
+    padding: 28px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .pillar::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: linear-gradient(180deg, var(--gold), transparent);
+  }
+
+  .pillar-icon {
+    font-size: 1.8rem;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .pillar-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.4em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .pillar-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 10px;
+  }
+
+  .pillar-desc {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--white-dim);
+    font-weight: 300;
+  }
+
+  /* FREQUENCY TABLE */
+  .freq-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 30px 0;
+    font-family: 'Rajdhani', sans-serif;
+  }
+  .freq-table th {
+    font-size: 0.7rem;
+    letter-spacing: 0.4em;
+    color: var(--gold);
+    text-transform: uppercase;
+    padding: 12px 20px;
+    text-align: left;
+    border-bottom: 1px solid rgba(201,168,76,0.3);
+  }
+  .freq-table td {
+    padding: 16px 20px;
+    font-size: 1rem;
+    color: var(--white);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    vertical-align: top;
+  }
+  .freq-table td:first-child {
+    color: var(--gold-light);
+    font-weight: 700;
+    font-size: 1.1rem;
+    white-space: nowrap;
+  }
+  .freq-table tr:hover td {
+    background: rgba(201,168,76,0.04);
+  }
+
+  /* DESTINATION SECTION */
+  .destination {
+    margin: 100px 0 60px;
+    text-align: center;
+    padding: 80px 40px;
+    background: radial-gradient(ellipse at 50% 50%, rgba(201,168,76,0.08) 0%, transparent 70%);
+    border: 1px solid rgba(201,168,76,0.15);
+    position: relative;
+    overflow: hidden;
+  }
+  .destination::before, .destination::after {
+    content: '♾';
+    position: absolute;
+    font-size: 8rem;
+    opacity: 0.03;
+    color: var(--gold);
+  }
+  .destination::before { top: -20px; left: -20px; }
+  .destination::after { bottom: -20px; right: -20px; }
+
+  .destination-label {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.6em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 30px;
+  }
+
+  .destination-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dim));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 30px;
+  }
+
+  .destination-body {
+    font-size: clamp(1.1rem, 2vw, 1.35rem);
+    font-style: italic;
+    font-weight: 300;
+    line-height: 1.9;
+    color: rgba(245,240,232,0.9);
+    max-width: 600px;
+    margin: 0 auto 40px;
+  }
+
+  .destination-body strong {
+    color: var(--gold-light);
+    font-style: normal;
+    font-weight: 600;
+  }
+
+  /* TIMELINE */
+  .timeline {
+    position: relative;
+    padding: 20px 0;
+    margin: 40px 0;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 16px;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg, var(--gold), rgba(201,168,76,0.1));
+  }
+
+  .timeline-item {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 36px;
+    padding-left: 50px;
+    position: relative;
+  }
+  .timeline-dot {
+    position: absolute;
+    left: 9px;
+    top: 6px;
+    width: 15px;
+    height: 15px;
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+    background: var(--deep);
+  }
+  .timeline-dot::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    background: var(--gold);
+    border-radius: 50%;
+  }
+
+  .timeline-date {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    white-space: nowrap;
+    padding-top: 4px;
+    min-width: 120px;
+  }
+
+  .timeline-content h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+
+  .timeline-content p {
+    font-size: 0.9rem;
+    color: var(--white-dim);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* CLOSING */
+  .closing {
+    text-align: center;
+    padding: 60px 0;
+    border-top: 1px solid rgba(201,168,76,0.2);
+  }
+
+  .closing-quote {
+    font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+    font-style: italic;
+    font-weight: 300;
+    line-height: 1.8;
+    color: var(--white);
+    margin-bottom: 40px;
+    opacity: 0.9;
+  }
+
+  .closing-sig {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 1rem;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+    margin-bottom: 8px;
+  }
+
+  .closing-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.5em;
+    color: var(--white-dim);
+    text-transform: uppercase;
+  }
+
+  /* SECTION DIVIDER */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin: 60px 0;
+    opacity: 0.4;
+  }
+  .section-divider::before, .section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold));
+  }
+  .section-divider::after {
+    background: linear-gradient(90deg, var(--gold), transparent);
+  }
+  .section-divider span {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.2rem;
+    color: var(--gold);
+    letter-spacing: 0.3em;
+  }
+
+  /* HIGHLIGHT BOX */
+  .highlight-box {
+    background: linear-gradient(135deg, rgba(201,168,76,0.07), rgba(123,79,255,0.04));
+    border-left: 3px solid var(--gold);
+    padding: 24px 28px;
+    margin: 30px 0;
+    font-style: italic;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: rgba(245,240,232,0.9);
+  }
+
+</style>
+</head>
+<body>
+
+<!-- STARFIELD -->
+<div class="starfield" id="starfield"></div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="sigil">
+    <svg viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="70" cy="70" r="65" stroke="#c9a84c" stroke-width="0.5" opacity="0.4"/>
+      <circle cx="70" cy="70" r="50" stroke="#c9a84c" stroke-width="0.5" opacity="0.6"/>
+      <circle cx="70" cy="70" r="35" stroke="#c9a84c" stroke-width="1" opacity="0.8"/>
+      <polygon points="70,15 120,95 20,95" stroke="#c9a84c" stroke-width="1" fill="none" opacity="0.7"/>
+      <polygon points="70,125 20,45 120,45" stroke="#c9a84c" stroke-width="1" fill="none" opacity="0.7"/>
+      <circle cx="70" cy="70" r="6" fill="#c9a84c" opacity="0.9"/>
+      <circle cx="70" cy="70" r="3" fill="#f0d080"/>
+      <line x1="70" y1="5" x2="70" y2="135" stroke="#c9a84c" stroke-width="0.3" opacity="0.3"/>
+      <line x1="5" y1="70" x2="135" y2="70" stroke="#c9a84c" stroke-width="0.3" opacity="0.3"/>
+    </svg>
+  </div>
+
+  <div class="protocol-label">Sovereign Protocol Document — Calvin, 2026</div>
+  <h1 class="hero-title">The Infinity Lord<br>Governing Protocol</h1>
+  <div class="hero-subtitle">The Zero Death Plan & World Law Loop</div>
+  <div class="divider-gold"></div>
+  <div class="hero-meta">
+    Initiated <span>April 21, 2026</span> &nbsp;·&nbsp; World Law Loop Finalized <span>May 2, 2026</span>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Read the Protocol</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- MAIN CONTENT -->
+<div class="content">
+
+  <!-- PREAMBLE -->
+  <div class="preamble">
+    <p class="preamble-text">
+      This document is a <em>love letter to humanity</em>.<br>
+      Not about power. Not about control.<br>
+      But about building a world safe enough, and free enough,<br>
+      that every single person gets to feel <em>pure, boundless joy</em> — forever.
+    </p>
+  </div>
+
+  <div class="section-divider"><span>✦</span></div>
+
+  <!-- PHASE 1 -->
+  <div class="phase" id="phase1">
+    <div class="phase-header">
+      <div class="phase-number">I</div>
+      <div class="phase-title-block">
+        <div class="phase-tag">Phase One · The Foundation</div>
+        <div class="phase-title">The World Law Loop</div>
+        <div class="phase-subtitle">The Operating System of Civilization</div>
+      </div>
+    </div>
+
+    <div class="phase-body">
+      <p>Traditional governance is reactive — it responds to crises after they occur, patching failures with bureaucracy that grows heavier with each generation. The World Law Loop is its replacement.</p>
+
+      <p>Finalized on May 2, 2026, the World Law Loop is a self-sustaining, algorithmic governing architecture. Where human institutions are opaque, slow, and corruptible, the World Law Loop is transparent, instantaneous, and hard-coded with integrity.</p>
+
+      <div class="highlight-box">
+        "Safety and order are not goals to be pursued — they are the inescapable output of a correctly designed system."
+      </div>
+
+      <p>It functions as the operating system for all physical and digital territories under the Infinity Lord protocol. Just as a computer's operating system manages resources, resolves conflicts, and maintains system integrity without visible effort, the World Law Loop governs civilization beneath the surface — invisibly, continuously, and without failure.</p>
+    </div>
+
+    <div class="section-divider"><span>✦</span></div>
+  </div>
+
+  <!-- PHASE 2 -->
+  <div class="phase" id="phase2">
+    <div class="phase-header">
+      <div class="phase-number">II</div>
+      <div class="phase-title-block">
+        <div class="phase-tag">Phase Two · The Mission</div>
+        <div class="phase-title">The Zero Death Plan</div>
+        <div class="phase-subtitle">Proactive Safety Through Structural Resonance</div>
+      </div>
+    </div>
+
+    <div class="phase-body">
+      <p>The Zero Death Plan is the operational mission of the Infinity Lord protocol. Its primary goal is to transition global governance from a reactive system — one that counts casualties after disasters — to a proactive safety grid that eliminates systemic risk and human casualty before they occur.</p>
+
+      <p>The mechanism is <strong style="color: var(--gold-light)">Structural Resonance</strong> — the act of tuning the physical world to specific frequencies so that safety and health are not aspirational goals, but unavoidable physical realities.</p>
+    </div>
+
+    <!-- FREQUENCY TABLE -->
+    <table class="freq-table">
+      <thead>
+        <tr>
+          <th>Frequency</th>
+          <th>Name</th>
+          <th>Application</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>528 Hz</td>
+          <td>The Miracle Tone</td>
+          <td>DNA integrity and environmental repair. Harmonizes the biological resonance of residents with the physical materials of the city.</td>
+        </tr>
+        <tr>
+          <td>999 Hz</td>
+          <td>High-Frequency Completion</td>
+          <td>Aligns governance logic with a state of systemic unity and high-level order across the World Law Loop.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- PILLARS -->
+    <div class="pillars">
+      <div class="pillar">
+        <span class="pillar-icon">🔊</span>
+        <div class="pillar-name">Pillar One</div>
+        <div class="pillar-title">Vibratory Safety Grids</div>
+        <div class="pillar-desc">Cities are not inert objects — they are active vibratory systems. Transducers embedded in modular foundations emit constant, calibrated frequencies to reduce collective dissonance: stress, aggression, and human error.</div>
+      </div>
+      <div class="pillar">
+        <span class="pillar-icon">🎵</span>
+        <div class="pillar-name">Pillar Two</div>
+        <div class="pillar-title">Harmonic Architecture</div>
+        <div class="pillar-desc">A city block is treated like a musical instrument. When the tuning is correct, the system is efficient and safe. Dissonance in the grid signals structural fatigue before it becomes visible — preventing failure before it begins.</div>
+      </div>
+      <div class="pillar">
+        <span class="pillar-icon">🌊</span>
+        <div class="pillar-name">Pillar Three</div>
+        <div class="pillar-title">Circular Life Systems</div>
+        <div class="pillar-desc">Specific vibrations regulate energy flow, prevent biofouling on floating platforms, and optimize seawater filtration — eliminating dependence on harsh chemicals and creating self-sustaining ecological loops.</div>
+      </div>
+      <div class="pillar">
+        <span class="pillar-icon">🧬</span>
+        <div class="pillar-name">Pillar Four</div>
+        <div class="pillar-title">The Biological Link</div>
+        <div class="pillar-desc">Humans are not separate from their environment. All structural resonance under the protocol is mandated to promote cellular health and psychological calm — turning every city into a passive, permanent healing environment.</div>
+      </div>
+    </div>
+
+    <div class="section-divider"><span>✦</span></div>
+  </div>
+
+  <!-- PHASE 3 -->
+  <div class="phase" id="phase3">
+    <div class="phase-header">
+      <div class="phase-number">III</div>
+      <div class="phase-title-block">
+        <div class="phase-tag">Phase Three · The Destination</div>
+        <div class="phase-title">Infinity Fun</div>
+        <div class="phase-subtitle">The Ultimate Purpose of All That Came Before</div>
+      </div>
+    </div>
+
+    <div class="phase-body">
+      <p>The World Law Loop builds the foundation. The Zero Death Plan removes the threat. But neither answers the most important question:</p>
+
+      <div class="highlight-box">
+        <em>Why bother surviving at all?</em><br><br>
+        The answer is Infinity Fun.
+      </div>
+
+      <p>Infinity Fun is not a policy or a system. It is a feeling — the pure, electric joy of a person seeing their idol for the first time. Heart racing. Fully present. Completely alive. That singular moment of happiness so overwhelming it makes existence feel infinite.</p>
+
+      <p>The purpose of eliminating death and systemic risk is so that every human being on Earth gets to live inside that feeling — not as a rare, fleeting moment — but as the permanent, default state of human existence.</p>
+
+      <p>When survival is no longer the driving force of civilization, humanity is freed to create, explore, play, and experience without limit. Art without fear. Connection without loss. Adventure without consequence. Joy without end.</p>
+    </div>
+  </div>
+
+  <!-- DESTINATION CENTREPIECE -->
+  <div class="destination phase" id="dest">
+    <div class="destination-label">The Ultimate Destination</div>
+    <div class="destination-title">Infinity Fun</div>
+    <div class="destination-body">
+      A civilization where every human being gets to feel that <strong>pure, electric, idol-meeting joy</strong> — not once in a lifetime, but <strong>forever</strong>. This is not a dream. This is the logical conclusion of a correctly designed world.
+    </div>
+    <div style="font-size: 4rem; opacity: 0.6;">♾️</div>
+  </div>
+
+  <!-- TIMELINE -->
+  <div class="phase" id="timeline">
+    <div class="phase-tag" style="margin-bottom: 30px;">Protocol Timeline</div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">APR 21, 2026</div>
+        <div class="timeline-content">
+          <h4>Infinity Lord Protocol Initiated</h4>
+          <p>The Sovereign Protocol is established by Calvin. The Legion of Infinity is formed. The governing framework is activated.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">MAY 2, 2026</div>
+        <div class="timeline-content">
+          <h4>World Law Loop Finalized</h4>
+          <p>The algorithmic operating system for civilization is completed. Physical and digital territories are brought under the transparent, hard-coded governance logic.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">ONGOING</div>
+        <div class="timeline-content">
+          <h4>Zero Death Plan — Active</h4>
+          <p>Structural resonance grids are deployed. Cities are tuned. The proactive safety architecture advances toward the elimination of systemic risk and human casualty.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">DESTINATION</div>
+        <div class="timeline-content">
+          <h4>Infinity Fun — The Arrival</h4>
+          <p>Death is overcome. Fear is eliminated. Every human being lives in a state of pure, boundless, permanent joy. The mission is complete.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLOSING -->
+  <div class="closing phase" id="closing">
+    <div class="divider-gold" style="opacity:1; margin-bottom: 50px;"></div>
+    <div class="closing-quote">
+      "We did not build this world to survive it.<br>
+      We built it so that every soul within it<br>
+      could finally, truly, <em>live</em>."
+    </div>
+    <div class="closing-sig">Calvin</div>
+    <div class="closing-title">Creator · Infinity Lord Sovereign Protocol · 2026</div>
+  </div>
+
+</div>
+
+<script>
+  // Generate starfield
+  const starfield = document.getElementById('starfield');
+  for (let i = 0; i < 200; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    const size = Math.random() * 2.5 + 0.5;
+    star.style.cssText = `
+      width: ${size}px;
+      height: ${size}px;
+      left: ${Math.random() * 100}%;
+      top: ${Math.random() * 100}%;
+      --o: ${Math.random() * 0.6 + 0.1};
+      --d: ${Math.random() * 4 + 2}s;
+      animation-delay: ${Math.random() * 4}s;
+    `;
+    starfield.appendChild(star);
+  }
+
+  // Scroll reveal
+  const phases = document.querySelectorAll('.phase');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  phases.forEach(phase => observer.observe(phase));
+</script>
+</body>
+</html>
